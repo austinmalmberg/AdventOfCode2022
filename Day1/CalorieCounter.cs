@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Day1
 {
@@ -20,13 +17,13 @@ namespace Day1
         /// </summary>
         /// <returns></returns>
         int Max();
-        
+
         /// <summary>
         /// Returns a list of the maximum calories in <paramref name="count"/> lists. Sorted in descending order.
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        int Top(int count);
+        IEnumerable<int> Top(int count);
     }
 
     public class CalorieCounter : ICalorieCounter
@@ -66,13 +63,12 @@ namespace Day1
             return CalorieList.Max(list => list.Sum());
         }
 
-        public int Top(int count)
+        public IEnumerable<int> Top(int count)
         {
             return CalorieList
                 .Select(list => list.Sum())
                 .OrderByDescending(calories => calories)
-                .Take(count)
-                .Sum();
+                .Take(count);
         }
     }
 

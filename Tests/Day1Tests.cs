@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Day1;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Day1;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Tests
+namespace Tests.Day1
 {
     [TestClass]
     public class CalorieCounterTests
@@ -75,7 +76,13 @@ namespace Tests
             };
             ICalorieCounter counter = new CalorieCounter(input);
 
-            Assert.AreEqual(45000, counter.Top(3));
+            IEnumerable<int> topCalories = counter.Top(3);
+
+            Assert.AreEqual(3, topCalories.Count());
+            Assert.AreEqual(24000, topCalories.ElementAt(0));
+            Assert.AreEqual(11000, topCalories.ElementAt(1));
+            Assert.AreEqual(10000, topCalories.ElementAt(2));
+            Assert.AreEqual(45000, topCalories.Sum());
         }
 
         [TestMethod]
@@ -89,7 +96,11 @@ namespace Tests
             };
             ICalorieCounter counter = new CalorieCounter(input);
 
-            Assert.AreEqual(3500, counter.Top(1));
+            IEnumerable<int> topCalories = counter.Top(1);
+
+            Assert.AreEqual(1, topCalories.Count());
+            Assert.AreEqual(3500, topCalories.ElementAt(0));
+            Assert.AreEqual(3500, topCalories.Sum());
         }
 
         [TestMethod]
@@ -114,7 +125,10 @@ namespace Tests
             };
             ICalorieCounter counter = new CalorieCounter(input);
 
-            Assert.AreEqual(55000, counter.Top(20));
+            IEnumerable<int> topCalories = counter.Top(20);
+
+            Assert.AreEqual(5, topCalories.Count());
+            Assert.AreEqual(55000, counter.Top(20).Sum());
         }
     }
 }
