@@ -7,24 +7,30 @@ namespace Day2
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
+        {
+            string file = Properties.Resources.strategy_guide;
+            string[] lines = file.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+
+            Console.WriteLine("Part 1: " + TotalScore(lines, GameRoundParseOptions.OpponentSelf));
+            Console.WriteLine("Part 2: " + TotalScore(lines, GameRoundParseOptions.OpponentOutcome));
+
+            Console.ReadKey();
+        }
+
+        public static int TotalScore(string[] lines, GameRoundParseOptions options)
         {
             List<IGameRound> rounds = new List<IGameRound>();
-            string file = Properties.Resources.strategy_guide;
 
-            foreach (string line in file.Split(new string[] { Environment.NewLine }, StringSplitOptions.None))
+            foreach (string line in lines)
             {
-                IGameRound round = new GameRound(line);
+                IGameRound round = new GameRound(line, options);
                 rounds.Add(round);
             }
 
-            int totalScore = rounds
+            return rounds
                 .Select(round => round.Score())
                 .Sum();
-
-            Console.WriteLine("Part 1: " + totalScore);
-
-            Console.ReadKey();
         }
     }
 }

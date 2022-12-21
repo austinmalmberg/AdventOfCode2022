@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Day2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Day2;
+using System;
 
-namespace Tests
+namespace Tests.Day2
 {
     [TestClass]
     public class ShapeAdapterTests
@@ -68,24 +68,67 @@ namespace Tests
     public class GameRoundTests
     {
         [TestMethod]
-        public void StringConstructor1_ParsesShapesCorrectly()
+        public void LineParsingConstructor_WithOpponentSelfOption_ParsesShapesCorrectly()
         {
-            string line = string.Format("{0} {1}", Shape.Rock.Opponent(), Shape.Paper.Self());
-            GameRound round = new GameRound(line);
+            string line = string.Format("{0} {1}", Shape.Rock.AsOpponentString(), Shape.Paper.AsSelfString());
+            GameRound round = new GameRound(line, GameRoundParseOptions.OpponentSelf);
 
             Assert.AreEqual(Shape.Rock, round.Opponent);
             Assert.AreEqual(Shape.Paper, round.Self);
         }
 
         [TestMethod]
-        public void StringConstructor2_ParsesShapesCorrectly()
+        [DataRow(Shape.Rock, Outcome.Win, Shape.Paper)]
+        [DataRow(Shape.Rock, Outcome.Draw, Shape.Rock)]
+        [DataRow(Shape.Rock, Outcome.Lose, Shape.Scissors)]
+        [DataRow(Shape.Paper, Outcome.Win, Shape.Scissors)]
+        [DataRow(Shape.Paper, Outcome.Draw, Shape.Paper)]
+        [DataRow(Shape.Paper, Outcome.Lose, Shape.Rock)]
+        [DataRow(Shape.Scissors, Outcome.Win, Shape.Rock)]
+        [DataRow(Shape.Scissors, Outcome.Draw, Shape.Scissors)]
+        [DataRow(Shape.Scissors, Outcome.Lose, Shape.Paper)]
+        public void LineParsingConstructor_WithOpponentOutcomeOption_ParsesShapesCorrectly(Shape opponent, Outcome outcome, Shape expected)
         {
-            GameRound round = new GameRound(Shape.Rock.Opponent(), Shape.Paper.Self());
+            string line = string.Format("{0} {1}", opponent.AsOpponentString(), outcome.AsString());
+            GameRound round = new GameRound(line, GameRoundParseOptions.OpponentOutcome);
 
-            Assert.AreEqual(Shape.Rock, round.Opponent);
-            Assert.AreEqual(Shape.Paper, round.Self);
+            Assert.AreEqual(expected, round.Self);
         }
-        
+
+        [TestMethod]
+        [DataRow(Shape.Rock, Shape.Paper, Outcome.Win)]
+        [DataRow(Shape.Rock, Shape.Rock, Outcome.Draw)]
+        [DataRow(Shape.Rock, Shape.Scissors, Outcome.Lose)]
+        [DataRow(Shape.Paper, Shape.Scissors, Outcome.Win)]
+        [DataRow(Shape.Paper, Shape.Paper, Outcome.Draw)]
+        [DataRow(Shape.Paper, Shape.Rock, Outcome.Lose)]
+        [DataRow(Shape.Scissors, Shape.Rock, Outcome.Win)]
+        [DataRow(Shape.Scissors, Shape.Scissors, Outcome.Draw)]
+        [DataRow(Shape.Scissors, Shape.Paper, Outcome.Lose)]
+        public void StringParsingConstructor_WithOpponentSelfOption_ParsesShapesCorrectly(Shape opponent, Shape self, Outcome expected)
+        {
+            GameRound round = new GameRound(opponent.AsOpponentString(), self.AsSelfString(), GameRoundParseOptions.OpponentSelf);
+
+            Assert.AreEqual(expected, round.Outcome);
+        }
+
+        [TestMethod]
+        [DataRow(Shape.Rock, Outcome.Win, Shape.Paper)]
+        [DataRow(Shape.Rock, Outcome.Draw, Shape.Rock)]
+        [DataRow(Shape.Rock, Outcome.Lose, Shape.Scissors)]
+        [DataRow(Shape.Paper, Outcome.Win, Shape.Scissors)]
+        [DataRow(Shape.Paper, Outcome.Draw, Shape.Paper)]
+        [DataRow(Shape.Paper, Outcome.Lose, Shape.Rock)]
+        [DataRow(Shape.Scissors, Outcome.Win, Shape.Rock)]
+        [DataRow(Shape.Scissors, Outcome.Draw, Shape.Scissors)]
+        [DataRow(Shape.Scissors, Outcome.Lose, Shape.Paper)]
+        public void StringParsingConstructor_WithOpponentOutcomeOption_ParsesShapesCorrectly(Shape opponent, Outcome outcome, Shape expected)
+        {
+            GameRound round = new GameRound(opponent.AsOpponentString(), outcome.AsString(), GameRoundParseOptions.OpponentOutcome);
+
+            Assert.AreEqual(expected, round.Self);
+        }
+
         [TestMethod]
         [DataRow(Shape.Rock, Shape.Paper)]
         [DataRow(Shape.Paper, Shape.Scissors)]
@@ -96,7 +139,7 @@ namespace Tests
 
             Assert.AreEqual(Outcome.Win, round.Outcome);
         }
-        
+
         [TestMethod]
         [DataRow(Shape.Rock, Shape.Rock)]
         [DataRow(Shape.Paper, Shape.Paper)]
@@ -107,7 +150,7 @@ namespace Tests
 
             Assert.AreEqual(Outcome.Draw, round.Outcome);
         }
-        
+
         [TestMethod]
         [DataRow(Shape.Rock, Shape.Scissors)]
         [DataRow(Shape.Paper, Shape.Rock)]

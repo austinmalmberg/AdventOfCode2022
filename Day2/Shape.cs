@@ -1,21 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Day2
 {
     public enum Shape
     {
-        Rock = 1,
-        Paper = 2,
-        Scissors = 3,
+        Rock,
+        Paper,
+        Scissors,
     }
 
     public static class ShapeExtensions
     {
-        public static string Opponent(this Shape shape)
+        public static Shape SuperiorShape(this Shape shape)
+        {
+            switch (shape)
+            {
+                case Shape.Rock:
+                    return Shape.Paper;
+                case Shape.Paper:
+                    return Shape.Scissors;
+                case Shape.Scissors:
+                    return Shape.Rock;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        public static Shape InferiorShape(this Shape shape)
+        {
+            switch (shape)
+            {
+                case Shape.Rock:
+                    return Shape.Scissors;
+                case Shape.Paper:
+                    return Shape.Rock;
+                case Shape.Scissors:
+                    return Shape.Paper;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        public static string AsOpponentString(this Shape shape)
         {
             switch (shape)
             {
@@ -30,7 +57,7 @@ namespace Day2
             }
         }
 
-        public static string Self(this Shape shape)
+        public static string AsSelfString(this Shape shape)
         {
             switch (shape)
             {
@@ -68,8 +95,8 @@ namespace Day2
         {
             foreach (Shape shape in Enum.GetValues(typeof(Shape)).Cast<Shape>())
             {
-                if (raw == shape.Opponent() ||
-                    raw == shape.Self())
+                if (raw == shape.AsOpponentString() ||
+                    raw == shape.AsSelfString())
                 {
                     return shape;
                 }
@@ -83,7 +110,7 @@ namespace Day2
         {
             foreach (Shape shape in Enum.GetValues(typeof(Shape)).Cast<Shape>())
             {
-                if (raw == shape.Self()) return shape;
+                if (raw == shape.AsSelfString()) return shape;
             }
 
             throw new ArgumentException(string.Format("{0} is not a valid Shape string", raw));
@@ -94,7 +121,7 @@ namespace Day2
         {
             foreach (Shape shape in Enum.GetValues(typeof(Shape)).Cast<Shape>())
             {
-                if (raw == shape.Opponent()) return shape;
+                if (raw == shape.AsOpponentString()) return shape;
             }
 
             throw new ArgumentException(string.Format("{0} is not a valid Shape string", raw));
