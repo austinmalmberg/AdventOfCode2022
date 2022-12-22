@@ -14,15 +14,37 @@ namespace Day3
             IEnumerable<IRucksack> rucksacks = lines
                 .Select(line => new Rucksack(line));
 
-            int totalSharedItemPriorities = rucksacks
-                .Select(rucksack => rucksack
-                    .SharedItems()
-                    .GetItemPriority())
-                .Sum();
-
-            Console.WriteLine("Part 1: " + totalSharedItemPriorities);
+            Console.WriteLine("Part 1: " + Part1Solution(rucksacks));
+            Console.WriteLine("Part 2: " + Part2Solution(rucksacks.ToList()));
 
             Console.ReadKey();
+        }
+
+        public static int Part1Solution(IEnumerable<IRucksack> rucksacks)
+        {
+            return rucksacks
+                .Select(rucksack => rucksack
+                    .GetItemsSharedBetweenCompartments()
+                    .Select(item => item.GetPriority())
+                    .Sum())
+                .Sum();
+        }
+
+        public static int Part2Solution(List<IRucksack> rucksacks)
+        {
+            List<IRucksackGroup> groups = new List<IRucksackGroup>();
+
+            for (int i = 0; i < rucksacks.Count; i += 3)
+            {
+                IRucksackGroup group = new RucksackGroup(rucksacks.GetRange(i, 3));
+                groups.Add(group);
+            }
+
+            return groups
+                .Select(group => group.SharedItems()
+                    .Select(item => item.GetPriority())
+                    .Sum())
+                .Sum();
         }
     }
 }

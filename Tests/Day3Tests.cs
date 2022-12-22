@@ -1,5 +1,6 @@
 ﻿using Day3;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Tests.Day3
@@ -27,12 +28,13 @@ namespace Tests.Day3
         {
             IRucksack rucksack = new Rucksack(input);
 
-            Assert.AreEqual(expected, rucksack.SharedItems());
+            string result = string.Join("", rucksack.GetItemsSharedBetweenCompartments());
+            Assert.AreEqual(expected, result);
         }
     }
 
     [TestClass]
-    public class ItemPriorityTests
+    public class PriorityTests
     {
         [TestMethod]
         [DataRow('p', 16)]
@@ -41,15 +43,15 @@ namespace Tests.Day3
         [DataRow('v', 22)]
         [DataRow('t', 20)]
         [DataRow('s', 19)]
-        public void GetItemPriority_ReturnsTheCorrectPriority(char ch, int expected)
+        public void GetPriority_ReturnsTheCorrectPriority(char ch, int expected)
         {
-            Assert.AreEqual(char.ToString(ch).GetItemPriority(), expected);
+            Assert.AreEqual(ch.GetPriority(), expected);
         }
 
         [TestMethod]
-        public void GetItemPriority_Sum_ReturnsTheCorrectTotal()
+        public void GetPrioritySum_ReturnsTheCorrectTotal()
         {
-            int result = new string[]
+            string[] rucksackStrings = new string[]
             {
                 "vJrwpWtwJgWrhcsFMMfFFhFp",
                 "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
@@ -57,13 +59,34 @@ namespace Tests.Day3
                 "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
                 "ttgJtRGJQctTZtZT",
                 "CrZsJsPPZsGzwwsLwLmpwMDw",
-            }
-                .Select(str => new Rucksack(str))
-                .Select(rucksack => rucksack.SharedItems())
-                .Select(sharedItems => sharedItems.GetItemPriority())
+            };
+
+            IEnumerable<Rucksack> rucksacks = rucksackStrings
+                .Select(str => new Rucksack(str));
+
+            int result = rucksacks
+                .Select(rucksack => rucksack.GetItemsSharedBetweenCompartments())
+                .Select(sharedItems => sharedItems
+                    .Select(item => item.GetPriority())
+                    .Sum())
                 .Sum();
 
             Assert.AreEqual(157, result);
+        }
+    }
+
+    [TestClass]
+    public class RucksackGroupTests
+    {
+        [TestMethod]
+        [DataRow(new string[] { "vJrwpWtwJgWrhcsFMMfFFhFp", "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL", "PmmdzqPrVvPwwTWBwg" }, "r")]
+        [DataRow(new string[] { "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn", "ttgJtRGJQctTZtZT", "CrZsJsPPZsGzwwsLwLmpwMDw" }, "Z")]
+        public void SharedItems_ReturnsTheCorrectResult(string[] rucksackStrings, string expected)
+        {
+            IEnumerable<IRucksack> rucksacks = rucksackStrings.Select(str => new Rucksack(str));
+            IRucksackGroup group = new RucksackGroup(rucksacks);
+
+            Assert.AreEqual(expected, string.Join("", group.SharedItems()));
         }
     }
 }
